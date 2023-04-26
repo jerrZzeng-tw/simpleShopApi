@@ -2,15 +2,17 @@
 
 ## 系統特色(Feature)
 
-- HTTP method POST, GET, PATCH, DELETE for CRUD API
-- Clean Code, meaningful naming, avoid duplicate code, fewer lines of the method, guard clause.
-- Well-managed and intuitive package design.
-- Use Spring Boot framework to build backend REST API project.
-- Use Spring Data JPA to map entity class
-- Use `@restcontrolleradvice` to deal all `Exception` thrown, preventing internal error stack trace message send out.
-- Use `@restcontrolleradvice` to return json info and data part.
-- Use Lombok to reduce boilerplate code, making development process easier, faster and more comfortable.
-- Use `Pessimistic Locking`, preventing data inconsistencies.
+- CRUD API 的 HTTP 方法包括 POST、GET、PATCH 和 DELETE。
+- 使用 Spring Boot 框架來建立後端 REST API 專案。
+- 使用 Spring Security + JWT 實作系統認證與授權
+- 使用 Spring Data JPA 來映射實體類別。
+- 使用 H2 Database 存放資料
+- 使用 `@restcontrolleradvice` 來處理所有拋出的 `Exception`，避免內部錯誤堆疊跟蹤訊息外洩。
+- 使用 `@restcontrolleradvice` 返回 JSON 訊息和資料。
+- 使用 Lombok 減少樣板程式碼，使開發流程更輕鬆、更快速、更舒適。
+- 使用悲觀鎖定`(Pessimistic Locking)`來防止資料不一致。
+- 使用 Swagger UI 方便使用者測試API
+- 撰寫乾淨的程式碼，使用有意義的命名，避免重複的程式碼，讓方法的程式碼行數更少，使用 guard clause。
 
 ## 使用以下技術(Tools/Framework/Library)
 
@@ -18,6 +20,7 @@
 - Spring Boot 2
 - Spring Security
 - Spring Data JPA
+- JSON Web Tokens
 - Jakarta Bean Validation
 - H2 Database
 - Swagger UI
