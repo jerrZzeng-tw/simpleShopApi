@@ -16,6 +16,7 @@
 
 - Java 18
 - Spring Boot 2
+- Spring Security
 - Spring Data JPA
 - Jakarta Bean Validation
 - H2 Database

@@ -2,10 +2,14 @@ package com.jerry.shop.config;
 
 
 import com.jerry.shop.filter.JwtAuthFilter;
+import com.jerry.shop.service.ProductService;
+import com.jerry.shop.service.ShopCartService;
 import com.jerry.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,6 +26,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ShopCartService shopCartService;
     @Autowired
     private UserService userDetailsService;
 
@@ -76,5 +86,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security",
                         "/swagger-ui.html", "/webjars/**");
+    }
+
+    /**
+     * 系統啟動時,新增預設資料
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void doSomethingAfterStartup() {
+        userService.initData();
+        productService.initData();
+        shopCartService.initData();
+        System.out.println("ShopCart init data complete.");
     }
 }
