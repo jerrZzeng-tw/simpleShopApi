@@ -50,4 +50,13 @@ public class ResDto<T> {
     public static ResDto<String> defult_ok(String data) {
         return new ResDto<String>(CodeMessage.SUCCESS.getCode(), CodeMessage.SUCCESS.getMessage(), data);
     }
+
+    public static ResDto<Object> unauthorized() {
+        return new ResDto<Object>(CodeMessage.UNAUTHORIZED.getCode(), CodeMessage.UNAUTHORIZED.getMessage(), null);
+    }
+
+    public static ResDto<Object> authenticateFail() {
+        return new ResDto<Object>(CodeMessage.AUTHENTICATE_FAIL.getCode(), CodeMessage.AUTHENTICATE_FAIL.getMessage(),
+                null);
+    }
 }
