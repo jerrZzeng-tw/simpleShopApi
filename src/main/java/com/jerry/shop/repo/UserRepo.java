@@ -12,13 +12,15 @@ import java.util.Optional;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-  Optional<User> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-  List<User> findByRole(String role);
+    Optional<User> findByUsernameAndPassword(String username, String password);
 
-  @Query("select distinct role from User")
-  List<String> findRoles();
+    List<User> findByRole(String role);
 
-  @Query("select u from User u join u.ShopCartList s where u.username =:username")
-  Optional<User> findByIdJoinShopCart(@Param("username") String username);
+    @Query("select distinct role from User")
+    List<String> findRoles();
+
+    @Query("select u from User u join u.ShopCartList s where u.username =:username")
+    Optional<User> findByIdJoinShopCart(@Param("username") String username);
 }
