@@ -7,6 +7,7 @@ import com.jerry.shop.service.ShopCartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,54 +27,57 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("shopCart")
 public class ShopCartController {
-  private ShopCartService shoppingService;
+    private ShopCartService shoppingService;
 
-  @ApiOperation("取得使用者訂單")
-  @GetMapping("/{userId}")
-  public List<ShopCartDto> findShopCartBy(@PathVariable("userId") Long userId) {
-    return shoppingService.findByUserId(userId);
-  }
-
-  @ApiOperation("取得使用者訂單明細")
-  @GetMapping("/{userId}/{orderId}")
-  public ShopCartDto findDetailBy(
-      @PathVariable("orderId") Long orderId, @PathVariable String userId) {
-    return shoppingService.findByShopCartId(orderId);
-  }
-
-  @ApiOperation("新增訂單")
-  @PostMapping("/{userId}")
-  public ShopCartDto addOrder(
-      @PathVariable("userId") Long userId,
-      @Validated(CartDetailDto.ValidAdd.class) @RequestBody ShopCartDto shopCartDto,
-      BindingResult result) {
-    if (result.hasErrors()) {
-      throw ApiException.fail(
-          result.getFieldErrors().stream()
-              .map(t -> t.getField() + ":" + t.getDefaultMessage())
-              .collect(Collectors.joining(",")));
+    @ApiOperation("取得使用者訂單")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @GetMapping("/{userId}")
+    public List<ShopCartDto> findShopCartBy(@PathVariable("userId") Long userId) {
+        return shoppingService.findByUserId(userId);
     }
-    return shoppingService.order(userId, shopCartDto);
-  }
 
-  @ApiOperation("刪除整筆訂單")
-  @DeleteMapping("/{userId}/{orderId}")
-  public void deleteOrder(@PathVariable("orderId") Long orderId, @PathVariable String userId) {
-    shoppingService.deleteOrderById(orderId);
-  }
+    @ApiOperation("取得使用者訂單明細")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @GetMapping("/{userId}/{orderId}")
+    public ShopCartDto findDetailBy(@PathVariable("orderId") Long orderId, @PathVariable String userId) {
+        return shoppingService.findByShopCartId(orderId);
+    }
 
-  @ApiOperation("更新訂單明細")
-  @PutMapping("/{userId}/{orderId}")
-  public void updateCartDetail(
-      @PathVariable String orderId,
-      @Validated(CartDetailDto.ValidUpdate.class) @RequestBody CartDetailDto cartDetailDto,
-      @PathVariable String userId) {
-    shoppingService.updateCartDetail(cartDetailDto);
-  }
+    @ApiOperation("新增訂單")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @PostMapping("/{userId}")
+    public ShopCartDto addOrder(@PathVariable("userId") Long userId,
+                                @Validated(CartDetailDto.ValidAdd.class) @RequestBody ShopCartDto shopCartDto,
+                                BindingResult result) {
+        if (result.hasErrors()) {
+            throw ApiException.fail(result.getFieldErrors()
+                    .stream()
+                    .map(t -> t.getField() + ":" + t.getDefaultMessage())
+                    .collect(Collectors.joining(",")));
+        }
+        return shoppingService.order(userId, shopCartDto);
+    }
 
-  @ApiOperation("訂單結帳")
-  @PostMapping("/checkout/{orderId}")
-  public void checkout(@PathVariable Long orderId) {
-    shoppingService.checkout(orderId);
-  }
+    @ApiOperation("刪除整筆訂單")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @DeleteMapping("/{userId}/{orderId}")
+    public void deleteOrder(@PathVariable("orderId") Long orderId, @PathVariable String userId) {
+        shoppingService.deleteOrderById(orderId);
+    }
+
+    @ApiOperation("更新訂單明細")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @PutMapping("/{userId}/{orderId}")
+    public void updateCartDetail(@PathVariable String orderId,
+                                 @Validated(CartDetailDto.ValidUpdate.class) @RequestBody CartDetailDto cartDetailDto,
+                                 @PathVariable String userId) {
+        shoppingService.updateCartDetail(cartDetailDto);
+    }
+
+    @ApiOperation("訂單結帳")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
+    @PostMapping("/checkout/{orderId}")
+    public void checkout(@PathVariable Long orderId) {
+        shoppingService.checkout(orderId);
+    }
 }

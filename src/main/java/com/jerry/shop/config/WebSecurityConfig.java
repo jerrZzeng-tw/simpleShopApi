@@ -5,6 +5,7 @@ import com.jerry.shop.filter.JwtAuthFilter;
 import com.jerry.shop.service.ProductService;
 import com.jerry.shop.service.ShopCartService;
 import com.jerry.shop.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
@@ -96,6 +98,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         userService.initData();
         productService.initData();
         shopCartService.initData();
-        System.out.println("ShopCart init data complete.");
+        log.info("ShopCart init data complete.");
     }
 }

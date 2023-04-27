@@ -5,6 +5,7 @@ import com.jerry.shop.dto.ProductDto;
 import com.jerry.shop.entity.Product;
 import com.jerry.shop.repo.ProductRepo;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class ProductService {
@@ -28,26 +30,28 @@ public class ProductService {
         return productRepo.findById(id).map(ProductDto::valueOf);
     }
 
+    @Transactional
     public void update(Long id, ProductDto productDto) {
         try {
-            System.out.println(Thread.currentThread().getName() + " update begin");
+            log.info(Thread.currentThread().getName() + " update begin");
 
             Product product = productRepo.findById(id).orElseThrow(EntityNotFoundException::new);
             product.setName(productDto.getName());
             productRepo.save(product);
 
-            System.out.println(Thread.currentThread().getName() + " update success");
+            log.info(Thread.currentThread().getName() + " update success");
         } catch (OptimisticLockingFailureException e) {
-            System.out.println("Optimistic locking occur");
-            e.printStackTrace();
+            log.error("Optimistic locking occur", e);
+
         }
     }
 
+    @Transactional
     public void save(Long id, ProductDto productDto) {
         boolean success = false;
         while (!success) {
             try {
-                System.out.println(Thread.currentThread().getName() + " update begin");
+                log.info(Thread.currentThread().getName() + " update begin");
                 Product product = productRepo.findById(id).map(
                         // 更新產品資訊
                         t -> {
@@ -67,14 +71,14 @@ public class ProductService {
                                 .createdAt(LocalDateTime.now())
                                 .build());
                 productRepo.save(product);
-                System.out.println(Thread.currentThread().getName() + " update success");
+                log.info(Thread.currentThread().getName() + " update success");
                 success = true;
             } catch (OptimisticLockingFailureException e) {
-                System.out.println(Thread.currentThread().getName() + " Optimistic locking occur");
+                log.error(Thread.currentThread().getName() + " Optimistic locking occur");
                 try {
                     Thread.sleep(1000L); // wait 1 seconds
                 } catch (InterruptedException interruptedException) {
-                    System.out.println("Thread interrupted");
+                    log.error("Thread interrupted");
                 }
             }
         }

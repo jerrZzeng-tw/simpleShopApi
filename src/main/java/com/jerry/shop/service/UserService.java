@@ -30,11 +30,6 @@ public class UserService implements UserDetailsService {
         return userRepo.findByUsername(username).map(UserDto::valueOf);
     }
 
-    public boolean login(String username, String password) {
-        Optional<User> user = userRepo.findByUsernameAndPassword(username, password);
-        return user.isPresent();
-    }
-
     public List<String> findRoles() {
         return userRepo.findRoles();
     }
@@ -47,19 +42,19 @@ public class UserService implements UserDetailsService {
         var userList = List.of(User.builder()
                 .username("admin")
                 .password("$2a$10$CK/CgQCP5mollG7i0rzi8eWmk1P6gC9GdUaHtFPSxqW5Q9pAQAR3K")
-                .role("ROLE_ADMIN")
+                .role("ADMIN")
                 .createdBy(ConstantKey.SYS_ID)
                 .createdAt(LocalDateTime.now())
                 .build(), User.builder()
                 .username("user1")
                 .password("$2a$10$CK/CgQCP5mollG7i0rzi8eWmk1P6gC9GdUaHtFPSxqW5Q9pAQAR3K")
-                .role("ROLE_USER")
+                .role("USER")
                 .createdBy(ConstantKey.SYS_ID)
                 .createdAt(LocalDateTime.now())
                 .build(), User.builder()
                 .username("user2")
                 .password("$2a$10$CK/CgQCP5mollG7i0rzi8eWmk1P6gC9GdUaHtFPSxqW5Q9pAQAR3K")
-                .role("ROLE_USER")
+                .role("USER")
                 .createdBy(ConstantKey.SYS_ID)
                 .createdAt(LocalDateTime.now())
                 .build());

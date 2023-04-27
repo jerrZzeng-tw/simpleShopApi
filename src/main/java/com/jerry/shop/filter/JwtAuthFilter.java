@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String userName = JWTHelper.getUserName(token); // 解析失敗時會丟出 exception
             List<SimpleGrantedAuthority> userAuthorities = JWTHelper.getUserAuthorities(token); // 解析失敗時會丟出 exception
             UserDetails userDetails = User.builder()
-                    .username("userName")
+                    .username(userName)
                     .authorities(userAuthorities)
                     .build(); // 因為 token 裡不會記錄 password, 所以 constructor 裡的 password 欄位帶入 null
 

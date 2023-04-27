@@ -3,6 +3,7 @@ package com.jerry.shop.config;
 import com.jerry.shop.dto.ResDto;
 import com.jerry.shop.enums.CodeMessage;
 import com.jerry.shop.exception.ApiException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+@Slf4j
 @RestControllerAdvice(annotations = RestController.class)
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @Override
@@ -36,8 +38,9 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     }
 
     @ExceptionHandler(value = ApiException.class)
-    public ResponseEntity<ResDto<Object>> apiEexceptionHandler(ApiException apiException) {
-        ResDto<Object> resDto = new ResDto<>(apiException);
+    public ResponseEntity<ResDto<Object>> apiEexceptionHandler(ApiException exception) {
+        log.error("ApiException:", exception);
+        ResDto<Object> resDto = new ResDto<>(exception);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return new ResponseEntity<>(resDto, headers, HttpStatus.OK);
@@ -45,6 +48,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ResDto<Object>> exceptionHandler(Exception exception) {
+        log.error("Exception:", exception);
         ResDto<Object> resDto = new ResDto<>(CodeMessage.ERROR.getCode(), CodeMessage.ERROR.getMessage(), null);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -53,7 +57,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(value = AuthenticationException.class)
     public ResponseEntity<ResDto<Object>> exceptionHandler(AuthenticationException exception) {
-
+        log.error("AuthenticationException:", exception);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return new ResponseEntity<>(ResDto.authenticateFail(), headers, HttpStatus.OK);

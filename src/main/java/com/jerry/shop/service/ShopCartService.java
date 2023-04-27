@@ -32,15 +32,13 @@ public class ShopCartService {
 
     private ProductRepo productRepo;
 
-    @Transactional
     public List<ShopCartDto> findByUserId(Long userId) {
         return shopCartRepo.findByUserIdJoinUserJoinCarDetail(userId)
                 .stream()
                 .map(ShopCartDto::valueOf)
                 .collect(Collectors.toList());
     }
-
-    @Transactional
+    
     public ShopCartDto findByShopCartId(Long id) {
         return shopCartRepo.findById(id).map(ShopCartDto::valueOf).orElseThrow(ApiException::noData);
     }
@@ -76,6 +74,7 @@ public class ShopCartService {
         shopCartRepo.deleteById(id);
     }
 
+    @Transactional
     public void updateCartDetail(CartDetailDto cartDetailDto) {
         cartDetailRepo.save(CartDetail.builder().id(cartDetailDto.getId()).amount(cartDetailDto.getAmount()).build());
     }
